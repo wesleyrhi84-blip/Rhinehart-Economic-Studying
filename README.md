@@ -2,6 +2,8 @@
 
 Welcome to the Rhinehart Economic Studying simulator! In this simulator, users can practice their economic knowledge, both macro and micro, across 6 different targeted study modules. These modules consist of vocabulary practice, market risk simulations, and applying practical knowledge to make real life decisions. The Rhinehart Economic Studying project can be downloaded directly from the listed HTML file above. To view code easier, the python script can be opened from the listed rhinehart_economic_studyng_code.py file above.
 
+* Each of the 5 modules and their code can be individually viewed and downloaded from the listed "ModuleX" files above
+
 ## Features
 
 * 5 hands-on economic studying modules, targeting important vocabulary, practical application, and key fundamentals of macroeconomics and microeconomics
