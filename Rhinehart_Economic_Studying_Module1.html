@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinehart Market Risk Simulator</title>
+    <style>
+      :root {
+        --bg: #eefcf8;
+        --card: rgba(255,255,255,0.72);
+        --teal: #146f73;
+        --teal-deep: #0d4c51;
+        --gold: #f7d570;
+        --peach: #f7b187;
+        --ink: #1d3438;
+        --muted: #5b727a;
+        --success: #1f8f67;
+        --danger: #d15d52;
+        --border: rgba(18, 69, 74, 0.15);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255,255,255,0.72), transparent 24%),
+          radial-gradient(circle at 80% 18%, rgba(72, 176, 175, 0.26), transparent 22%),
+          radial-gradient(circle at 50% 100%, rgba(255, 173, 101, 0.10), transparent 28%),
+          linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%);
+        color: var(--ink);
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+        pointer-events: none;
+      }
+      .page-bubbles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bubble {
+        position: absolute;
+        top: var(--top);
+        left: var(--left);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        opacity: 0.70;
+        border: 1px solid rgba(255,255,255,0.8);
+        background: radial-gradient(circle at 30% 28%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 18%, rgba(248, 203, 166, 0.9) 36%, rgba(245, 157, 104, 0.74) 62%, rgba(219, 108, 70, 0.44) 80%, rgba(255,255,255,0.06) 100%);
+        box-shadow: inset 0 0 12px rgba(255,255,255,0.8), 0 0 22px rgba(255, 200, 150, 0.12);
+        animation: ambientFloat var(--duration) ease-in-out infinite alternate;
+        animation-delay: var(--delay);
+      }
+      .sea-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 110px;
+        background: linear-gradient(180deg, rgba(234, 201, 149, 0.9), rgba(196, 156, 95, 0.96));
+        border-top: 1px solid rgba(112, 84, 56, 0.18);
+        box-shadow: 0 -12px 26px rgba(73, 52, 38, 0.12);
+        z-index: 0;
+      }
+      @keyframes ambientFloat {
+        0% { transform: translate3d(0, 0, 0) scale(0.85); opacity: 0.08; }
+        25% { opacity: 0.42; }
+        50% { transform: translate3d(var(--drift1), var(--rise1), 0) scale(1.02); opacity: 0.7; }
+        75% { transform: translate3d(var(--drift2), var(--rise2), 0) scale(1.08); opacity: 0.36; }
+        100% { transform: translate3d(var(--drift3), var(--rise3), 0) scale(1.12); opacity: 0.05; }
+      }
+      .app {
+        position: relative;
+        z-index: 1;
+        width: min(900px, 100%);
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(21, 70, 77, 0.08);
+        border-radius: 26px;
+        box-shadow: 0 18px 50px rgba(16, 71, 77, 0.14);
+        padding: 22px;
+        backdrop-filter: blur(8px);
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        color: var(--teal-deep);
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 22px;
+      }
+      .hidden { display: none; }
+      .visible { display: block; }
+      .options-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .option-btn {
+        background: linear-gradient(180deg, #ffffff, #edfdfa);
+        border: 1px solid rgba(18, 69, 74, 0.12);
+        border-radius: 14px;
+        padding: 14px 16px;
+        text-align: left;
+        cursor: pointer;
+        color: var(--ink);
+        font-size: 1rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .option-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(12, 63, 63, 0.12);
+      }
+      .primary-btn {
+        display: block;
+        margin: 20px auto 0;
+        background: linear-gradient(135deg, #1d7b7d, #0d5b60);
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 10px;
+        margin: 18px 0 20px;
+      }
+      .stat-box {
+        background: rgba(255,255,255,0.5);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 12px 14px;
+        font-weight: 600;
+      }
+      .quiz-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+      .feedback {
+        min-height: 1.5rem;
+        margin-top: 16px;
+        font-weight: 700;
+        line-height: 1.6;
+      }
+      .feedback.correct { color: var(--success); }
+      .feedback.wrong { color: var(--danger); }
+      .explanation {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-left: 4px solid rgba(20, 111, 115, 0.7);
+        background: rgba(255,255,255,0.52);
+        border-radius: 12px;
+        line-height: 1.7;
+        font-size: 0.97rem;
+      }
+      .summary-card {
+        margin-top: 16px;
+      }
+      @media (max-width:560px){
+        .quiz-meta { flex-direction: column; }
+        .stats { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 8%; --left: 8%; --size: 70px; --duration: 18s; --delay: 0s; --drift1: 22px; --rise1: 24px; --drift2: -18px; --rise2: -18px; --drift3: 16px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 14%; --left: 28%; --size: 110px; --duration: 22s; --delay: 1.4s; --drift1: -26px; --rise1: 30px; --drift2: 18px; --rise2: -18px; --drift3: 12px; --rise3: 42px;"></span>
+      <span class="bubble" style="--top: 10%; --left: 54%; --size: 86px; --duration: 20s; --delay: 0.8s; --drift1: 24px; --rise1: 28px; --drift2: -20px; --rise2: -22px; --drift3: 18px; --rise3: 34px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 72%; --size: 96px; --duration: 24s; --delay: 2.2s; --drift1: -18px; --rise1: 24px; --drift2: 26px; --rise2: -30px; --drift3: -12px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 26%; --left: 14%; --size: 120px; --duration: 26s; --delay: 1.8s; --drift1: 18px; --rise1: 40px; --drift2: -30px; --rise2: -18px; --drift3: 10px; --rise3: 52px;"></span>
+      <span class="bubble" style="--top: 34%; --left: 40%; --size: 78px; --duration: 17s; --delay: 0.3s; --drift1: -22px; --rise1: 18px; --drift2: 26px; --rise2: -18px; --drift3: -14px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 30%; --left: 82%; --size: 70px; --duration: 19s; --delay: 0.9s; --drift1: 16px; --rise1: 30px; --drift2: -24px; --rise2: -25px; --drift3: 20px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 44%; --left: 6%; --size: 130px; --duration: 30s; --delay: 1.5s; --drift1: 30px; --rise1: 38px; --drift2: -20px; --rise2: -30px; --drift3: 12px; --rise3: 44px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 32%; --size: 100px; --duration: 24s; --delay: 2.6s; --drift1: -22px; --rise1: 26px; --drift2: 18px; --rise2: -18px; --drift3: 16px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 62%; --left: 58%; --size: 72px; --duration: 18s; --delay: 1.1s; --drift1: 20px; --rise1: 24px; --drift2: -18px; --rise2: -30px; --drift3: 10px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 68%; --left: 86%; --size: 82px; --duration: 21s; --delay: 2.1s; --drift1: -24px; --rise1: 28px; --drift2: 22px; --rise2: -20px; --drift3: -16px; --rise3: 38px;"></span>
+      <span class="bubble" style="--top: 74%; --left: 18%; --size: 88px; --duration: 23s; --delay: 0.5s; --drift1: 18px; --rise1: 22px; --drift2: -16px; --rise2: -26px; --drift3: 14px; --rise3: 36px;"></span>
+    </div>
+    <div class="sea-floor" aria-hidden="true"></div>
+    <div class="app">
+      <header class="hero">
+        <h1>Rhinehart Market Risk Simulator</h1>
+        <p class="subtitle">Analyze each business scenario, choose whether to invest, and estimate the risk level.</p>
+      </header>
+
+      <main>
+        <section id="quiz-screen" class="panel visible">
+          <div class="quiz-meta">
+            <span id="question-count">Scenario 1 of 10</span>
+            <span id="score-count">Score: 0/10</span>
+          </div>
+
+          <h2 id="scenario-text"></h2>
+          <div id="stats" class="stats"></div>
+
+          <div id="question-box">
+            <h3 id="prompt-text"></h3>
+            <div id="answer-options" class="options-grid"></div>
+            <p id="feedback" class="feedback" aria-live="polite"></p>
+            <div id="explanation-box" class="explanation hidden"></div>
+          </div>
+        </section>
+
+        <section id="summary-screen" class="panel hidden">
+          <h2>Review Complete</h2>
+          <p id="summary-text" class="summary-card"></p>
+          <button id="restart-btn" class="primary-btn">Restart</button>
+          <button id="menu-btn" class="primary-btn" style="margin-top: 12px; background: linear-gradient(135deg, #f3d0a2, #de9b70); color: #22373d;">Return to Menu</button>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const promptTemplates = [
+        'A local bakery is preparing to expand into a new city with a larger storefront and more equipment to better serve its customers.',
+        'A small clothing store is considering a new website and online inventory system to support growth in a competitive market.',
+        'A delivery company is planning to hire more drivers during a slower economy in hopes of meeting demand and strengthening operations.',
+        'A coffee shop is thinking about opening a second location in a different neighborhood.',
+        'A software startup is preparing to launch a new product in a fast-changing industry.'
+      ];
+      const names = ['Carter', 'Wesley', 'Jordan', 'Taylor', 'Morgan', 'Avery', 'Riley', 'Casey', 'Allie'];
+      const totalScenarios = 5;
+      const maxPoints = totalScenarios * 2;
+      const questionCount = document.getElementById('question-count');
+      const scoreCount = document.getElementById('score-count');
+      const scenarioText = document.getElementById('scenario-text');
+      const statsBox = document.getElementById('stats');
+      const promptText = document.getElementById('prompt-text');
+      const answerOptions = document.getElementById('answer-options');
+      const feedback = document.getElementById('feedback');
+      const explanationBox = document.getElementById('explanation-box');
+      const summaryText = document.getElementById('summary-text');
+      const quizScreen = document.getElementById('quiz-screen');
+      const summaryScreen = document.getElementById('summary-screen');
+      const restartBtn = document.getElementById('restart-btn');
+
+      let currentScenario = null;
+      let score = 0;
+      let currentIndex = 0;
+      let scenarios = [];
+      let answeredDecision = null;
+      let answeredLevel = null;
+
+      function buildScenario() {
+        const personName = names[Math.floor(Math.random() * names.length)];
+        const interestRate = (Math.random() * 10 + 2).toFixed(2);
+        const unemploymentRate = (Math.random() * 12 + 3).toFixed(2);
+        const businessCapital = Math.floor(Math.random() * 45001) + 15000;
+        const investmentCost = Math.floor(Math.random() * (businessCapital - 5000)) + 5000;
+        const demand = ['high', 'medium', 'low'][Math.floor(Math.random() * 3)];
+        const competition = ['low', 'medium', 'high'][Math.floor(Math.random() * 3)];
+        const prompt = `${personName} is the investor and business owner reviewing this opportunity. ${promptTemplates[Math.floor(Math.random() * promptTemplates.length)]} The business is weighing whether this decision is the right move for long-term growth.`;
+
+        const riskScore = calculateRiskScore(Number(interestRate), Number(unemploymentRate), businessCapital, investmentCost, demand, competition);
+        const riskLevel = getRiskLevel(riskScore);
+
+        return {
+          prompt,
+          interestRate,
+          unemploymentRate,
+          businessCapital,
+          investmentCost,
+          demand,
+          competition,
+          riskScore,
+          riskLevel
+        };
+      }
+
+      function calculateRiskScore(interestRate, unemploymentRate, businessCapital, investmentAmount, marketDemand, competition) {
+        let total = (interestRate * 2.5) + (unemploymentRate * 2);
+
+        if (investmentAmount < businessCapital / 2) {
+          total += 2;
+        } else {
+          total += 10;
+        }
+
+        if (marketDemand === 'low') total += 12;
+        else if (marketDemand === 'medium') total += 6;
+        else total -= 3;
+
+        if (competition === 'high') total += 12;
+        else if (competition === 'medium') total += 6;
+        else total -= 3;
+
+        if (total > 100) return 100;
+        if (total < 0) return 0;
+        return Math.round(total);
+      }
+
+      function getRiskLevel(score) {
+        if (score <= 33) return 'Low';
+        if (score <= 66) return 'Medium';
+        return 'High';
+      }
+
+      function beginQuiz() {
+        currentIndex = 0;
+        score = 0;
+        scenarios = Array.from({ length: totalScenarios }, buildScenario);
+        quizScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+        renderScenario();
+      }
+
+      function renderScenario() {
+        if (currentIndex >= scenarios.length) {
+          renderSummary();
+          return;
+        }
+
+        currentScenario = scenarios[currentIndex];
+        answeredDecision = null;
+        answeredLevel = null;
+
+        questionCount.textContent = `Scenario ${currentIndex + 1} of ${scenarios.length}`;
+        scoreCount.textContent = `Score: ${score}/${maxPoints}`;
+        scenarioText.textContent = currentScenario.prompt;
+        statsBox.innerHTML = `
+          <div class="stat-box">Business Capital: $${currentScenario.businessCapital.toLocaleString()}</div>
+          <div class="stat-box">Investment Cost: $${currentScenario.investmentCost.toLocaleString()}</div>
+          <div class="stat-box">Market Demand: ${currentScenario.demand.charAt(0).toUpperCase() + currentScenario.demand.slice(1)}</div>
+          <div class="stat-box">Competition: ${currentScenario.competition.charAt(0).toUpperCase() + currentScenario.competition.slice(1)}</div>
+        `;
+
+        promptText.textContent = 'Continue with investment?';
+        answerOptions.innerHTML = '';
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+        explanationBox.classList.add('hidden');
+        explanationBox.textContent = '';
+
+        ['Yes', 'No'].forEach((choice) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.textContent = choice;
+          button.addEventListener('click', () => handleDecision(choice));
+          answerOptions.appendChild(button);
+        });
+      }
+
+      function handleDecision(choice) {
+        answeredDecision = choice;
+        promptText.textContent = 'Do you think this investment has Low Risk, Medium Risk, or High Risk?';
+        answerOptions.innerHTML = '';
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+
+        ['Low Risk', 'Medium Risk', 'High Risk'].forEach((riskChoice) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.textContent = riskChoice;
+          button.addEventListener('click', () => handleRiskLevel(riskChoice));
+          answerOptions.appendChild(button);
+        });
+      }
+
+      function handleRiskLevel(choice) {
+        answeredLevel = choice;
+        const actualLevel = currentScenario.riskLevel;
+        let decisionCorrect = false;
+        let levelCorrect = false;
+
+        if (actualLevel === 'Low') {
+          decisionCorrect = answeredDecision === 'Yes';
+          levelCorrect = choice === 'Low Risk';
+        } else if (actualLevel === 'Medium') {
+          decisionCorrect = true;
+          levelCorrect = choice === 'Medium Risk';
+        } else {
+          decisionCorrect = answeredDecision === 'No';
+          levelCorrect = choice === 'High Risk';
+        }
+
+        const overallStatus =
+          decisionCorrect && levelCorrect ? 'Fully correct' :
+          decisionCorrect || levelCorrect ? 'Partially correct' : 'Incorrect';
+
+        if (overallStatus === 'Fully correct') {
+          score += 2;
+        } else if (overallStatus === 'Partially correct') {
+          score += 1;
+        }
+
+        scoreCount.textContent = `Score: ${score}/${maxPoints}`;
+
+        const demandDescription =
+          currentScenario.demand === 'high'
+            ? 'Demand is strong and sustained, creating a favorable environment for converting the opportunity into revenue.'
+            : currentScenario.demand === 'medium'
+              ? 'Demand is moderate, so the business should be cautious and cannot rely on robust customer interest.'
+              : 'Demand is weak, which makes it difficult to generate meaningful sales from the opportunity.';
+
+        const competitionDescription =
+          currentScenario.competition === 'low'
+            ? 'Few competitors are present, improving the business’s ability to differentiate and capture market share.'
+            : currentScenario.competition === 'medium'
+              ? 'The space is moderately contested, requiring the business to sharpen its value proposition to stand out.'
+              : 'The market is crowded with established players, making customer acquisition and momentum much harder.';
+
+        const capitalDescription =
+          currentScenario.investmentCost < currentScenario.businessCapital / 2
+            ? 'The investment is a relatively conservative allocation, preserving the business’s financial flexibility.'
+            : 'The investment consumes a substantial portion of capital, reducing the company’s ability to absorb setbacks.';
+
+        const isCorrect = overallStatus === 'Fully correct';
+        feedback.textContent = isCorrect ? 'Correct!' : 'Not quite.';
+        feedback.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+
+        explanationBox.innerHTML = `
+          <strong>${isCorrect ? 'Why this is correct:' : 'Correct answer:'}</strong> ${actualLevel} Risk<br><br>
+          <strong>Investment choice:</strong> ${decisionCorrect ? 'Correct' : 'Incorrect'}<br>
+          <strong>Risk estimate:</strong> ${levelCorrect ? 'Correct' : 'Incorrect'}<br><br>
+          <strong>Why:</strong> ${capitalDescription}<br>
+          <strong>Demand:</strong> ${demandDescription}<br>
+          <strong>Competition:</strong> ${competitionDescription}
+        `;
+        explanationBox.classList.remove('hidden');
+
+        answerOptions.innerHTML = '';
+
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'primary-btn';
+        nextBtn.textContent = currentIndex === scenarios.length - 1 ? 'Finish Review' : 'Next Scenario';
+        nextBtn.addEventListener('click', () => {
+          if (currentIndex === scenarios.length - 1) {
+            renderSummary();
+            return;
+          }
+          currentIndex += 1;
+          renderScenario();
+        });
+        answerOptions.appendChild(nextBtn);
+
+        const menuBtnInScenario = document.createElement('button');
+        menuBtnInScenario.className = 'primary-btn';
+        menuBtnInScenario.style.marginTop = '12px';
+        menuBtnInScenario.style.background = 'linear-gradient(135deg, #f3d0a2, #de9b70)';
+        menuBtnInScenario.style.color = '#22373d';
+        menuBtnInScenario.textContent = 'Return to Menu';
+        menuBtnInScenario.addEventListener('click', () => {
+          window.location.href = 'rhinehart_economic_studying.html';
+        });
+        answerOptions.appendChild(menuBtnInScenario);
+      }
+
+      function renderSummary() {
+        quizScreen.classList.add('hidden');
+        summaryScreen.classList.remove('hidden');
+        summaryText.textContent = `You scored ${score} out of ${maxPoints}. Great work staying sharp on the market risk decisions.`;
+
+        const prompt = document.createElement('p');
+        prompt.textContent = 'Would you like to restart or return to the menu?';
+        prompt.style.fontWeight = '700';
+        prompt.style.marginTop = '18px';
+        summaryText.insertAdjacentElement('afterend', prompt);
+      }
+
+      restartBtn.addEventListener('click', beginQuiz);
+      document.getElementById('menu-btn').addEventListener('click', () => {
+        window.location.href = 'rhinehart_economic_studying.html';
+      });
+
+      beginQuiz();
+    </script>
+  </body>
+</html>

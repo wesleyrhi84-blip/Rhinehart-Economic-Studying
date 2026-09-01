@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinehart Macroeconomic Vocabulary Review</title>
+    <style>
+      :root {
+        --bg: #eefaf9;
+        --card: rgba(255,255,255,0.72);
+        --teal: #136f72;
+        --teal-deep: #0d4b50;
+        --gold: #f1d364;
+        --peach: #f4b38a;
+        --ink: #1e343b;
+        --muted: #5a7178;
+        --success: #1f8d67;
+        --danger: #d25c52;
+        --border: rgba(14, 67, 70, 0.15);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255,255,255,0.72), transparent 24%),
+          radial-gradient(circle at 80% 18%, rgba(72, 176, 175, 0.26), transparent 22%),
+          radial-gradient(circle at 50% 100%, rgba(255, 173, 101, 0.10), transparent 28%),
+          linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%);
+        color: var(--ink);
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+        pointer-events: none;
+      }
+      .page-bubbles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bubble {
+        position: absolute;
+        top: var(--top);
+        left: var(--left);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        opacity: 0.70;
+        border: 1px solid rgba(255,255,255,0.8);
+        background: radial-gradient(circle at 30% 28%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 18%, rgba(248, 203, 166, 0.9) 36%, rgba(245, 157, 104, 0.74) 62%, rgba(219, 108, 70, 0.44) 80%, rgba(255,255,255,0.06) 100%);
+        box-shadow: inset 0 0 12px rgba(255,255,255,0.8), 0 0 22px rgba(255, 200, 150, 0.12);
+        animation: ambientFloat var(--duration) ease-in-out infinite alternate;
+        animation-delay: var(--delay);
+      }
+      .sea-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 110px;
+        background: linear-gradient(180deg, rgba(234, 201, 149, 0.9), rgba(196, 156, 95, 0.96));
+        border-top: 1px solid rgba(112, 84, 56, 0.18);
+        box-shadow: 0 -12px 26px rgba(73, 52, 38, 0.12);
+        z-index: 0;
+      }
+      @keyframes ambientFloat {
+        0% { transform: translate3d(0, 0, 0) scale(0.85); opacity: 0.08; }
+        25% { opacity: 0.42; }
+        50% { transform: translate3d(var(--drift1), var(--rise1), 0) scale(1.02); opacity: 0.7; }
+        75% { transform: translate3d(var(--drift2), var(--rise2), 0) scale(1.08); opacity: 0.36; }
+        100% { transform: translate3d(var(--drift3), var(--rise3), 0) scale(1.12); opacity: 0.05; }
+      }
+      .app {
+        position: relative;
+        z-index: 1;
+        width: min(860px, 100%);
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(21, 70, 77, 0.08);
+        border-radius: 26px;
+        box-shadow: 0 18px 50px rgba(16, 71, 77, 0.14);
+        padding: 22px;
+        backdrop-filter: blur(8px);
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        color: var(--teal-deep);
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 22px;
+      }
+      .hidden { display: none; }
+      .visible { display: block; }
+      .options-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .option-btn {
+        background: linear-gradient(180deg, #ffffff, #edfdfa);
+        border: 1px solid rgba(18, 69, 74, 0.12);
+        border-radius: 14px;
+        padding: 14px 16px;
+        text-align: left;
+        cursor: pointer;
+        color: var(--ink);
+        font-size: 1rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .option-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(12, 63, 63, 0.12);
+      }
+      .primary-btn {
+        display: block;
+        margin: 20px auto 0;
+        background: linear-gradient(135deg, #1d7b7d, #0d5b60);
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .quiz-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+      .feedback {
+        min-height: 1.5rem;
+        margin-top: 16px;
+        font-weight: 700;
+      }
+      .feedback.correct { color: var(--success); }
+      .feedback.wrong { color: var(--danger); }
+      .summary-card {
+        margin-top: 16px;
+      }
+      @media (max-width:560px){ .quiz-meta{flex-direction:column;} }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 8%; --left: 8%; --size: 70px; --duration: 18s; --delay: 0s; --drift1: 22px; --rise1: 24px; --drift2: -18px; --rise2: -18px; --drift3: 16px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 14%; --left: 28%; --size: 110px; --duration: 22s; --delay: 1.4s; --drift1: -26px; --rise1: 30px; --drift2: 18px; --rise2: -18px; --drift3: 12px; --rise3: 42px;"></span>
+      <span class="bubble" style="--top: 10%; --left: 54%; --size: 86px; --duration: 20s; --delay: 0.8s; --drift1: 24px; --rise1: 28px; --drift2: -20px; --rise2: -22px; --drift3: 18px; --rise3: 34px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 72%; --size: 96px; --duration: 24s; --delay: 2.2s; --drift1: -18px; --rise1: 24px; --drift2: 26px; --rise2: -30px; --drift3: -12px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 26%; --left: 14%; --size: 120px; --duration: 26s; --delay: 1.8s; --drift1: 18px; --rise1: 40px; --drift2: -30px; --rise2: -18px; --drift3: 10px; --rise3: 52px;"></span>
+      <span class="bubble" style="--top: 34%; --left: 40%; --size: 78px; --duration: 17s; --delay: 0.3s; --drift1: -22px; --rise1: 18px; --drift2: 26px; --rise2: -18px; --drift3: -14px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 30%; --left: 82%; --size: 70px; --duration: 19s; --delay: 0.9s; --drift1: 16px; --rise1: 30px; --drift2: -24px; --rise2: -25px; --drift3: 20px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 44%; --left: 6%; --size: 130px; --duration: 30s; --delay: 1.5s; --drift1: 30px; --rise1: 38px; --drift2: -20px; --rise2: -30px; --drift3: 12px; --rise3: 44px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 32%; --size: 100px; --duration: 24s; --delay: 2.6s; --drift1: -22px; --rise1: 26px; --drift2: 18px; --rise2: -18px; --drift3: 16px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 62%; --left: 58%; --size: 72px; --duration: 18s; --delay: 1.1s; --drift1: 20px; --rise1: 24px; --drift2: -18px; --rise2: -30px; --drift3: 10px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 68%; --left: 86%; --size: 82px; --duration: 21s; --delay: 2.1s; --drift1: -24px; --rise1: 28px; --drift2: 22px; --rise2: -20px; --drift3: -16px; --rise3: 38px;"></span>
+      <span class="bubble" style="--top: 74%; --left: 18%; --size: 88px; --duration: 23s; --delay: 0.5s; --drift1: 18px; --rise1: 22px; --drift2: -16px; --rise2: -26px; --drift3: 14px; --rise3: 36px;"></span>
+    </div>
+    <div class="sea-floor" aria-hidden="true"></div>
+    <div class="app">
+      <header class="hero">
+        <h1>Rhinehart Macroeconomic Vocabulary Review</h1>
+        <p class="subtitle">Answer 10 macroeconomics vocabulary review questions.</p>
+      </header>
+
+      <main>
+        <section id="quiz-screen" class="panel visible">
+          <div class="quiz-meta">
+            <span id="question-count">Question 1 of 10</span>
+            <span id="score-count">Score: 0/10</span>
+          </div>
+          <h2 id="question-text"></h2>
+          <div id="answer-options" class="options-grid"></div>
+          <p id="feedback" class="feedback" aria-live="polite"></p>
+        </section>
+
+        <section id="summary-screen" class="panel hidden">
+          <h2>Review Complete</h2>
+          <p id="summary-text" class="summary-card"></p>
+          <button id="restart-btn" class="primary-btn">Restart</button>
+          <button id="menu-btn" class="primary-btn" style="margin-top: 12px; background: linear-gradient(135deg, #f3d0a2, #de9b70); color: #22373d;">Return to Menu</button>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const vocabulary = [
+        { term: 'Economics', definition: 'study of how individuals and societies deal with scarcity; study of choices' },
+        { term: 'Scarcity', definition: 'unlimited wants but limited resources' },
+        { term: 'Macroeconomics', definition: 'study of large economic units such as entire economies; focuses on GDP, inflation, unemployment, and growth' },
+        { term: 'Theoretical Economics', definition: 'use of the scientific method to make generalizations and abstractions to develop theories' },
+        { term: 'Policy Economics', definition: 'theories are applied to fix problems or meet economic goals' },
+        { term: 'Positive Statements', definition: 'based on facts; avoid value judgments (what is)' },
+        { term: 'Normative Statements', definition: 'includes value judgments (what ought to be)' },
+        { term: 'Gross Domestic Product', definition: 'total value of all final goods and services produced within a country in a given year' },
+        { term: 'Inflation', definition: 'general rise in prices over time' },
+        { term: 'Unemployment', definition: 'people looking for work but not currently employed' },
+        { term: 'Business Cycle', definition: 'alternating periods of economic expansion and contraction' },
+        { term: 'Recession', definition: 'period of declining real GDP and rising unemployment' },
+        { term: 'Expansion', definition: 'period of increasing output, employment, and income' },
+        { term: 'Fiscal Policy', definition: 'government use of taxes and spending to influence the economy' },
+        { term: 'Monetary Policy', definition: 'central bank actions that influence money supply and interest rates' },
+        { term: 'GDP Per Capita', definition: 'GDP divided by the population' },
+        { term: 'Aggregate Demand', definition: 'total demand for goods and services in the economy at all price levels' },
+        { term: 'Aggregate Supply', definition: 'total supply of goods and services produced in the economy at all price levels' },
+        { term: 'Phillips Curve', definition: 'shows the tradeoff between inflation and unemployment in the short run' },
+        { term: 'Crowding Out', definition: 'when government borrowing reduces private investment' },
+        { term: 'Trade Balance', definition: 'difference between exports and imports' },
+        { term: 'National Debt', definition: 'total amount the government owes to lenders' },
+        { term: 'Interest Rate', definition: 'cost of borrowing money or return earned on savings' },
+        { term: 'Labor Force', definition: 'sum of employed and unemployed people who are working or looking for work' },
+        { term: 'Consumer Price Index', definition: 'measure of the average change over time in prices paid by consumers' },
+        { term: 'Economic Growth', definition: 'increase in a country’s production of goods and services over time' },
+        { term: 'Stagflation', definition: 'high inflation and high unemployment at the same time' }
+      ];
+
+      const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+      const capitalizeSentence = (text) => text.charAt(0).toUpperCase() + text.slice(1);
+      const quizScreen = document.getElementById('quiz-screen');
+      const summaryScreen = document.getElementById('summary-screen');
+      const restartBtn = document.getElementById('restart-btn');
+      const questionText = document.getElementById('question-text');
+      const questionCount = document.getElementById('question-count');
+      const scoreCount = document.getElementById('score-count');
+      const answerOptions = document.getElementById('answer-options');
+      const feedback = document.getElementById('feedback');
+      const summaryText = document.getElementById('summary-text');
+
+      let questions = [];
+      let currentIndex = 0;
+      let score = 0;
+
+      function renderQuestion() {
+        const current = questions[currentIndex];
+        if (!current) {
+          renderSummary();
+          return;
+        }
+
+        const wrongAnswers = shuffle(vocabulary.filter((item) => item.term !== current.term)).slice(0, 4);
+        const choices = shuffle([current.term, ...wrongAnswers.map((item) => item.term)]);
+
+        questionCount.textContent = `Question ${currentIndex + 1} of ${questions.length}`;
+        scoreCount.textContent = `Score: ${score}/${questions.length}`;
+        questionText.textContent = capitalizeSentence(current.definition);
+        answerOptions.innerHTML = '';
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+
+        choices.forEach((choice) => {
+          const button = document.createElement('button');
+          button.className = 'option-btn';
+          button.textContent = choice;
+          button.addEventListener('click', () => checkAnswer(choice, current.term));
+          answerOptions.appendChild(button);
+        });
+      }
+
+      function checkAnswer(selected, correct) {
+        const isCorrect = selected === correct;
+        if (isCorrect) score += 1;
+
+        feedback.textContent = isCorrect
+          ? 'Correct — Nice work.'
+          : `Not quite. The correct answer is: ${correct}`;
+        feedback.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+
+        Array.from(answerOptions.children).forEach((button) => {
+          button.disabled = true;
+          if (button.textContent === correct) {
+            button.style.background = 'linear-gradient(135deg, #dff8ef, #b9ead7)';
+          }
+          if (button.textContent === selected && selected !== correct) {
+            button.style.background = 'linear-gradient(135deg, #ffe4e1, #f7c8c4)';
+          }
+        });
+
+        setTimeout(() => {
+          currentIndex += 1;
+          renderQuestion();
+        }, 950);
+      }
+
+      function renderSummary() {
+        quizScreen.classList.add('hidden');
+        summaryScreen.classList.remove('hidden');
+        summaryText.textContent = `You scored ${score} out of ${questions.length}. Great job staying sharp on the big macro ideas.`;
+      }
+
+      function beginQuiz() {
+        currentIndex = 0;
+        score = 0;
+        questions = shuffle(vocabulary).slice(0, 10);
+        quizScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+        renderQuestion();
+      }
+
+      restartBtn.addEventListener('click', beginQuiz);
+      document.getElementById('menu-btn').addEventListener('click', () => {
+        window.location.href = 'rhinehart_economic_studying.html';
+      });
+      beginQuiz();
+    </script>
+  </body>
+</html>

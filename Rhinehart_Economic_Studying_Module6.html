@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinehart Comprehensive Economics Test</title>
+    <style>
+      :root {
+        --ink: #24313b;
+        --muted: #5e6c77;
+        --purple: #32154f;
+        --purple-deep: #210d39;
+        --purple-soft: #eadff4;
+        --success: #1f8f67;
+        --danger: #c7525b;
+        --border: rgba(34, 27, 59, 0.15);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 8%, rgba(255,255,255,0.82), transparent 24%),
+          radial-gradient(circle at 88% 20%, rgba(218, 190, 235, 0.48), transparent 24%),
+          linear-gradient(180deg, #f7effb 0%, #e9e0f1 48%, #c9dfe0 100%);
+        overflow-x: hidden;
+      }
+      html, body {
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255,255,255,0.78), transparent 22%),
+          radial-gradient(circle at 80% 20%, rgba(66,154,164,0.28), transparent 24%),
+          radial-gradient(circle at bottom right, rgba(20,101,109,0.22), transparent 26%),
+          linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%);
+        overflow: hidden;
+      }
+      body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 15% 20%, rgba(255,176,96,0.14), transparent 18%), radial-gradient(circle at 82% 14%, rgba(255,176,96,0.12), transparent 18%), linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02)); pointer-events: none; }
+      .page-bubbles { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; filter: blur(0.15px); }
+      .bubble { position: absolute; top: var(--top); left: var(--left); width: var(--size); height: var(--size); border-radius: 50%; opacity: 0.72; border: 1px solid rgba(255,255,255,0.72); background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,255,255,0.64) 18%, rgba(248,203,166,0.82) 36%, rgba(245,157,104,0.62) 62%, rgba(219,108,70,0.34) 80%, rgba(255,255,255,0.04) 100%); box-shadow: inset 0 0 12px rgba(255,255,255,0.72), 0 0 22px rgba(255,200,150,0.12); animation: ambientFloat var(--duration) ease-in-out infinite alternate; animation-delay: var(--delay); }
+      @keyframes ambientFloat { 0% { transform: translate3d(0,0,0) scale(0.85); opacity: 0.08; } 50% { transform: translate3d(var(--drift1),var(--rise1),0) scale(1.02); opacity: 0.7; } 100% { transform: translate3d(var(--drift3),var(--rise3),0) scale(1.12); opacity: 0.05; } }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .app {
+        width: min(940px, 100%);
+        padding: 26px 22px;
+        background: rgba(255,255,255,0.42);
+        border: 1px solid rgba(70, 42, 88, 0.12);
+        border-radius: 26px;
+        box-shadow: 0 22px 54px rgba(47, 28, 66, 0.16);
+        backdrop-filter: blur(8px);
+      }
+      .hero { text-align: center; margin-bottom: 22px; }
+      h1 { margin: 0 0 8px; color: var(--purple-deep); font-size: clamp(2rem, 4vw, 3rem); }
+      .subtitle { margin: 0; color: var(--muted); line-height: 1.6; }
+      .panel {
+        background: rgba(255,255,255,0.72);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 24px;
+      }
+      .hidden { display: none; }
+      .quiz-meta { display: flex; justify-content: space-between; gap: 16px; color: var(--muted); font-weight: 700; margin-bottom: 18px; }
+      .question-text { margin: 0; line-height: 1.55; }
+      .source-label { margin: 8px 0 0; color: var(--purple); font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; }
+      .options-grid { display: grid; gap: 12px; margin-top: 20px; }
+      .option-btn {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid rgba(34, 27, 59, 0.14);
+        border-radius: 12px;
+        background: linear-gradient(180deg, #fff, #f4eef8);
+        color: var(--ink);
+        text-align: left;
+        font: inherit;
+        cursor: pointer;
+      }
+      .option-btn:hover { border-color: rgba(50, 21, 79, 0.5); }
+      .option-btn.selected { background: var(--purple-soft); border: 2px solid var(--purple); padding: 13px 15px; font-weight: 700; }
+      .primary-btn {
+        display: block;
+        margin: 22px auto 0;
+        padding: 12px 22px;
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #553078, var(--purple));
+        color: white;
+        font: inherit;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .primary-btn:disabled { opacity: 0.5; cursor: default; }
+      .status { min-height: 1.5rem; margin: 16px 0 0; color: var(--muted); text-align: center; }
+      .summary-card { margin-top: 16px; padding: 18px; background: rgba(255,255,255,0.76); border: 1px solid var(--border); border-radius: 14px; line-height: 1.7; }
+      .review-box { max-height: 520px; overflow-y: auto; margin-top: 20px; padding: 16px; background: linear-gradient(145deg, var(--purple-deep), var(--purple)); border-radius: 16px; color: #fff; }
+      .review-box h3 { margin: 0 0 14px; color: #f3dcff; }
+      .review-item { padding: 16px 0; border-top: 1px solid rgba(255,255,255,0.22); }
+      .review-item:first-of-type { border-top: 0; }
+      .review-item p { margin: 6px 0 0; line-height: 1.55; }
+      .review-item .correct { color: #b8f0d4; font-weight: 800; }
+      .review-item .incorrect { color: #ffc7c9; font-weight: 800; }
+      @media (max-width: 560px) {
+        body { padding: 12px; }
+        .app, .panel { padding: 18px; }
+        .quiz-meta { flex-direction: column; gap: 6px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 8%; --left: 8%; --size: 70px; --duration: 18s; --delay: 0s; --drift1: 22px; --rise1: 24px; --drift3: 16px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 72%; --size: 96px; --duration: 24s; --delay: 2.2s; --drift1: -18px; --rise1: 24px; --drift3: -12px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 32%; --size: 100px; --duration: 24s; --delay: 2.6s; --drift1: -22px; --rise1: 26px; --drift3: 16px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 68%; --left: 86%; --size: 82px; --duration: 21s; --delay: 2.1s; --drift1: -24px; --rise1: 28px; --drift3: -16px; --rise3: 38px;"></span>
+    </div>
+    <div class="app">
+      <header class="hero">
+        <h1>Comprehensive Economics Test</h1>
+        <p class="subtitle">A 20-question mixed review drawn from all five study modules.</p>
+      </header>
+
+      <main>
+        <section id="quiz-screen" class="panel">
+          <div class="quiz-meta">
+            <span id="question-count">Question 1 of 20</span>
+            <span id="score-count">Answered: 0/20</span>
+          </div>
+          <h2 id="question-text" class="question-text"></h2>
+          <p id="source-label" class="source-label"></p>
+          <div id="answer-options" class="options-grid"></div>
+          <p id="status" class="status" aria-live="polite">Choose an answer to continue.</p>
+          <button id="next-btn" class="primary-btn" type="button" disabled>Next Question</button>
+        </section>
+
+        <section id="summary-screen" class="panel hidden">
+          <h2>Test Complete</h2>
+          <p id="summary-text" class="summary-card"></p>
+          <div id="review-box" class="review-box" tabindex="0">
+            <h3>Answer Review</h3>
+            <div id="review-list"></div>
+          </div>
+          <button id="restart-btn" class="primary-btn" type="button">Take Test Again</button>
+          <button id="menu-btn" class="primary-btn" type="button" style="margin-top: 12px; background: linear-gradient(135deg, #e7c9f1, #c9a4dc); color: #32154f;">Return to Menu</button>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const questionBank = [
+        { source: 'Market Risk Review', question: 'What usually happens to borrowing costs when interest rates rise?', options: ['They usually fall', 'They usually rise', 'They become unrelated to loans', 'They disappear'], correctIndex: 1 },
+        { source: 'Market Risk Review', question: 'Why can high unemployment increase market risk for a business?', options: ['It guarantees higher sales', 'It can reduce household spending', 'It eliminates competition', 'It lowers every business cost'], correctIndex: 1 },
+        { source: 'Market Risk Review', question: 'An investment that uses most of a business\'s available capital is risky mainly because it:', options: ['Leaves less flexibility for setbacks', 'Always creates a guaranteed profit', 'Removes all fixed costs', 'Makes demand irrelevant'], correctIndex: 0 },
+        { source: 'Market Risk Review', question: 'Which combination generally creates the most challenging market environment?', options: ['Strong demand and low competition', 'Weak demand and high competition', 'Strong demand and low interest rates', 'Low competition and high demand'], correctIndex: 1 },
+        { source: 'Microeconomic Vocabulary Review', question: 'According to the law of demand, what generally happens when price rises?', options: ['Quantity demanded rises', 'Quantity demanded falls', 'Supply disappears', 'Income is unchanged'], correctIndex: 1 },
+        { source: 'Microeconomic Vocabulary Review', question: 'What is market equilibrium?', options: ['The point where quantity supplied equals quantity demanded', 'A market with no buyers', 'The highest possible price', 'A permanent shortage'], correctIndex: 0 },
+        { source: 'Microeconomic Vocabulary Review', question: 'What does price elasticity of demand measure?', options: ['How responsive quantity demanded is to a price change', 'How much a firm pays in taxes', 'How many workers a firm hires', 'The total value of production'], correctIndex: 0 },
+        { source: 'Microeconomic Vocabulary Review', question: 'What is a surplus?', options: ['A situation where quantity demanded exceeds quantity supplied', 'A situation where quantity supplied exceeds quantity demanded', 'A fall in all prices', 'A shortage of information'], correctIndex: 1 },
+        { source: 'Macroeconomic Vocabulary Review', question: 'What does gross domestic product measure?', options: ['The value of final goods and services produced within a country', 'Only government tax revenue', 'The number of imports alone', 'The price of one product'], correctIndex: 0 },
+        { source: 'Macroeconomic Vocabulary Review', question: 'What is inflation?', options: ['A sustained rise in the overall price level', 'A fall in the unemployment rate only', 'An increase in one worker\'s wage', 'A decrease in total production'], correctIndex: 0 },
+        { source: 'Macroeconomic Vocabulary Review', question: 'What does the unemployment rate measure?', options: ['The share of the labor force without jobs and actively seeking work', 'Everyone who is not working, including children', 'The number of available businesses', 'The total number of retirees'], correctIndex: 0 },
+        { source: 'Macroeconomic Vocabulary Review', question: 'Fiscal policy primarily involves changes in:', options: ['Government spending and taxation', 'Private advertising', 'The weather', 'Household preferences only'], correctIndex: 0 },
+        { source: 'Economic Decision-Making', question: 'What is opportunity cost?', options: ['The money price of every option', 'The value of the next-best alternative forgone', 'A cost that has already been paid', 'The benefit of the chosen option'], correctIndex: 1 },
+        { source: 'Economic Decision-Making', question: 'Why should a sunk cost not determine a current decision?', options: ['It can always be recovered', 'It has already been paid and cannot be changed', 'It is always larger than the benefit', 'It is never recorded'], correctIndex: 1 },
+        { source: 'Economic Decision-Making', question: 'What does marginal analysis compare?', options: ['Total revenue with total population', 'Additional benefit with additional cost', 'Imports with exports only', 'Past prices with future wages'], correctIndex: 1 },
+        { source: 'Economic Decision-Making', question: 'Scarcity exists because:', options: ['Resources are unlimited', 'Human wants are limited', 'Resources are limited relative to wants', 'Every choice has no cost'], correctIndex: 2 },
+        { source: 'Scarcity & Tradeoff Review', question: 'What is a tradeoff?', options: ['A choice that involves giving up something else', 'A guarantee that every option is chosen', 'A price increase caused by inflation', 'A business with no constraints'], correctIndex: 0 },
+        { source: 'Scarcity & Tradeoff Review', question: 'What does a point inside a production possibilities frontier generally indicate?', options: ['Efficient production', 'An unattainable combination', 'Inefficient use of resources', 'Unlimited resources'], correctIndex: 2 },
+        { source: 'Scarcity & Tradeoff Review', question: 'What is comparative advantage based on?', options: ['Having the lowest opportunity cost', 'Having the highest money price', 'Producing everything alone', 'Avoiding all specialization'], correctIndex: 0 },
+        { source: 'Scarcity & Tradeoff Review', question: 'A rational decision-maker should continue an activity when:', options: ['Marginal benefit is at least as large as marginal cost', 'Sunk cost is high', 'The activity has no benefit', 'The opportunity cost is ignored'], correctIndex: 0 },
+        { source: 'Market Risk Review', question: 'Low market demand creates risk because it can:', options: ['Make sales harder to generate', 'Guarantee strong revenue', 'Remove the need for planning', 'Increase every customer\'s income'], correctIndex: 0 },
+        { source: 'Microeconomic Vocabulary Review', question: 'What is a shortage?', options: ['Quantity supplied exceeds quantity demanded', 'Quantity demanded exceeds quantity supplied', 'A market at equilibrium', 'A fall in demand caused by income'], correctIndex: 1 },
+        { source: 'Macroeconomic Vocabulary Review', question: 'Which policy is expansionary fiscal policy?', options: ['Increasing government spending during a slowdown', 'Reducing all government purchases during a slowdown', 'Raising interest rates directly', 'Reducing the money supply'], correctIndex: 0 },
+        { source: 'Economic Decision-Making', question: 'If Jordan studies instead of working a $60 shift, what is the opportunity cost?', options: ['The value of the $60 shift', 'The exam grade earned', 'The time Jordan spent studying only', 'The cost of the textbook'], correctIndex: 0 },
+        { source: 'Scarcity & Tradeoff Review', question: 'Why do limited time and money force people to make choices?', options: ['They are scarce resources with alternative uses', 'They have no economic value', 'They make all choices free', 'They eliminate opportunity cost'], correctIndex: 0 }
+      ];
+
+      const questionCount = document.getElementById('question-count');
+      const scoreCount = document.getElementById('score-count');
+      const questionText = document.getElementById('question-text');
+      const sourceLabel = document.getElementById('source-label');
+      const answerOptions = document.getElementById('answer-options');
+      const status = document.getElementById('status');
+      const nextBtn = document.getElementById('next-btn');
+      const quizScreen = document.getElementById('quiz-screen');
+      const summaryScreen = document.getElementById('summary-screen');
+      const summaryText = document.getElementById('summary-text');
+      const reviewList = document.getElementById('review-list');
+      const restartBtn = document.getElementById('restart-btn');
+      const menuBtn = document.getElementById('menu-btn');
+
+      let testQuestions = [];
+      let responses = [];
+      let currentIndex = 0;
+
+      function shuffle(items) {
+        const shuffled = [...items];
+        for (let index = shuffled.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1));
+          [shuffled[index], shuffled[swapIndex]] = [shuffled[swapIndex], shuffled[index]];
+        }
+        return shuffled;
+      }
+
+      function buildTest() {
+        const grouped = questionBank.reduce((groups, question) => {
+          if (!groups[question.source]) groups[question.source] = [];
+          groups[question.source].push(question);
+          return groups;
+        }, {});
+        return shuffle(Object.values(grouped).flatMap((questions) => shuffle(questions).slice(0, 4)));
+      }
+
+      function renderQuestion() {
+        const current = testQuestions[currentIndex];
+        questionCount.textContent = `Question ${currentIndex + 1} of ${testQuestions.length}`;
+        scoreCount.textContent = `Answered: ${responses.filter((response) => response !== null).length}/${testQuestions.length}`;
+        questionText.textContent = current.question;
+        sourceLabel.textContent = current.source;
+        answerOptions.innerHTML = '';
+        nextBtn.disabled = true;
+        status.textContent = 'Choose an answer to continue.';
+
+        current.options.forEach((option, optionIndex) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'option-btn';
+          button.textContent = option;
+          button.addEventListener('click', () => selectAnswer(optionIndex));
+          answerOptions.appendChild(button);
+        });
+      }
+
+      function selectAnswer(selectedIndex) {
+        responses[currentIndex] = selectedIndex;
+        answerOptions.querySelectorAll('.option-btn').forEach((button, optionIndex) => {
+          button.classList.toggle('selected', optionIndex === selectedIndex);
+        });
+        scoreCount.textContent = `Answered: ${responses.filter((response) => response !== null).length}/${testQuestions.length}`;
+        status.textContent = 'Answer recorded. Correctness will be shown at the end.';
+        nextBtn.disabled = false;
+      }
+
+      function renderSummary() {
+        const correctCount = responses.reduce((total, response, index) => total + (response === testQuestions[index].correctIndex ? 1 : 0), 0);
+        quizScreen.classList.add('hidden');
+        summaryScreen.classList.remove('hidden');
+        summaryText.textContent = `You scored ${correctCount} out of ${testQuestions.length}. Review every response below to see the correct answer and strengthen your understanding.`;
+        reviewList.innerHTML = '';
+
+        testQuestions.forEach((question, index) => {
+          const selectedIndex = responses[index];
+          const item = document.createElement('article');
+          item.className = 'review-item';
+          const resultClass = selectedIndex === question.correctIndex ? 'correct' : 'incorrect';
+          item.innerHTML = `
+            <strong>${index + 1}. ${question.question}</strong>
+            <p>Your response: ${selectedIndex === null ? 'No answer' : question.options[selectedIndex]}</p>
+            <p>Correct response: ${question.options[question.correctIndex]}</p>
+            <p class="${resultClass}">${selectedIndex === question.correctIndex ? 'Correct' : 'Needs review'}</p>
+          `;
+          reviewList.appendChild(item);
+        });
+      }
+
+      function startTest() {
+        testQuestions = buildTest();
+        responses = Array(testQuestions.length).fill(null);
+        currentIndex = 0;
+        quizScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+        renderQuestion();
+      }
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex === testQuestions.length - 1) {
+          renderSummary();
+          return;
+        }
+        currentIndex += 1;
+        renderQuestion();
+      });
+      restartBtn.addEventListener('click', startTest);
+      menuBtn.addEventListener('click', () => {
+        window.location.href = 'rhinehart_economic_studying.html';
+      });
+      startTest();
+    </script>
+  </body>
+</html>

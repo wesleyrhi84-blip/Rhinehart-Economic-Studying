@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinehart Economic Decision-Making</title>
+    <style>
+      :root {
+        --bg: #eefcf8;
+        --card: rgba(255,255,255,0.72);
+        --teal: #146f73;
+        --teal-deep: #0d4c51;
+        --gold: #f7d570;
+        --peach: #f7b187;
+        --ink: #1d3438;
+        --muted: #5b727a;
+        --success: #1f8f67;
+        --danger: #d15d52;
+        --border: rgba(18, 69, 74, 0.15);
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255,255,255,0.72), transparent 24%),
+          radial-gradient(circle at 80% 18%, rgba(72, 176, 175, 0.26), transparent 22%),
+          radial-gradient(circle at 50% 100%, rgba(255, 173, 101, 0.10), transparent 28%),
+          linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%);
+        color: var(--ink);
+        overflow-x: hidden;
+      }
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        position: relative;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02));
+        pointer-events: none;
+      }
+      .page-bubbles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+      }
+      .bubble {
+        position: absolute;
+        top: var(--top);
+        left: var(--left);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        opacity: 0.70;
+        border: 1px solid rgba(255,255,255,0.8);
+        background: radial-gradient(circle at 30% 28%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 18%, rgba(248, 203, 166, 0.9) 36%, rgba(245, 157, 104, 0.74) 62%, rgba(219, 108, 70, 0.44) 80%, rgba(255,255,255,0.06) 100%);
+        box-shadow: inset 0 0 12px rgba(255,255,255,0.8), 0 0 22px rgba(255, 200, 150, 0.12);
+        animation: ambientFloat var(--duration) ease-in-out infinite alternate;
+        animation-delay: var(--delay);
+      }
+      .sea-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 110px;
+        background: linear-gradient(180deg, rgba(234, 201, 149, 0.9), rgba(196, 156, 95, 0.96));
+        border-top: 1px solid rgba(112, 84, 56, 0.18);
+        box-shadow: 0 -12px 26px rgba(73, 52, 38, 0.12);
+        z-index: 0;
+      }
+      @keyframes ambientFloat {
+        0% { transform: translate3d(0, 0, 0) scale(0.85); opacity: 0.08; }
+        25% { opacity: 0.42; }
+        50% { transform: translate3d(var(--drift1), var(--rise1), 0) scale(1.02); opacity: 0.7; }
+        75% { transform: translate3d(var(--drift2), var(--rise2), 0) scale(1.08); opacity: 0.36; }
+        100% { transform: translate3d(var(--drift3), var(--rise3), 0) scale(1.12); opacity: 0.05; }
+      }
+      .app {
+        position: relative;
+        z-index: 1;
+        width: min(920px, 100%);
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(21, 70, 77, 0.08);
+        border-radius: 26px;
+        box-shadow: 0 18px 50px rgba(16, 71, 77, 0.14);
+        padding: 22px;
+        backdrop-filter: blur(8px);
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        color: var(--teal-deep);
+      }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+      }
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        padding: 22px;
+      }
+      .hidden { display: none; }
+      .visible { display: block; }
+      .quiz-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        color: var(--muted);
+        font-weight: 700;
+        margin-bottom: 14px;
+      }
+      .scenario {
+        margin: 0 0 18px;
+        line-height: 1.6;
+        font-size: clamp(1.12rem, 2vw, 1.35rem);
+      }
+      .question-text {
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+      .options-grid {
+        display: grid;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .option-btn {
+        background: linear-gradient(180deg, #ffffff, #edfdfa);
+        border: 1px solid rgba(18, 69, 74, 0.12);
+        border-radius: 14px;
+        padding: 14px 16px;
+        text-align: left;
+        cursor: pointer;
+        color: var(--ink);
+        font-size: 1rem;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .option-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(12, 63, 63, 0.12);
+      }
+      .option-btn:disabled {
+        cursor: default;
+        opacity: 0.9;
+      }
+      .primary-btn {
+        display: block;
+        margin: 20px auto 0;
+        background: linear-gradient(135deg, #1d7b7d, #0d5b60);
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .feedback {
+        min-height: 1.5rem;
+        margin-top: 16px;
+        font-weight: 700;
+        line-height: 1.6;
+      }
+      .feedback.correct { color: var(--success); }
+      .feedback.wrong { color: var(--danger); }
+      .explanation {
+        margin-top: 12px;
+        padding: 14px 16px;
+        border-left: 4px solid rgba(20, 111, 115, 0.7);
+        background: rgba(255,255,255,0.52);
+        border-radius: 12px;
+        line-height: 1.7;
+        font-size: 0.97rem;
+      }
+      .summary-card {
+        margin-top: 16px;
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+      @media (max-width:560px){
+        .quiz-meta { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 8%; --left: 8%; --size: 70px; --duration: 18s; --delay: 0s; --drift1: 22px; --rise1: 24px; --drift2: -18px; --rise2: -18px; --drift3: 16px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 14%; --left: 28%; --size: 110px; --duration: 22s; --delay: 1.4s; --drift1: -26px; --rise1: 30px; --drift2: 18px; --rise2: -18px; --drift3: 12px; --rise3: 42px;"></span>
+      <span class="bubble" style="--top: 10%; --left: 54%; --size: 86px; --duration: 20s; --delay: 0.8s; --drift1: 24px; --rise1: 28px; --drift2: -20px; --rise2: -22px; --drift3: 18px; --rise3: 34px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 72%; --size: 96px; --duration: 24s; --delay: 2.2s; --drift1: -18px; --rise1: 24px; --drift2: 26px; --rise2: -30px; --drift3: -12px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 26%; --left: 14%; --size: 120px; --duration: 26s; --delay: 1.8s; --drift1: 18px; --rise1: 40px; --drift2: -30px; --rise2: -18px; --drift3: 10px; --rise3: 52px;"></span>
+      <span class="bubble" style="--top: 34%; --left: 40%; --size: 78px; --duration: 17s; --delay: 0.3s; --drift1: -22px; --rise1: 18px; --drift2: 26px; --rise2: -18px; --drift3: -14px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 30%; --left: 82%; --size: 70px; --duration: 19s; --delay: 0.9s; --drift1: 16px; --rise1: 30px; --drift2: -24px; --rise2: -25px; --drift3: 20px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 44%; --left: 6%; --size: 130px; --duration: 30s; --delay: 1.5s; --drift1: 30px; --rise1: 38px; --drift2: -20px; --rise2: -30px; --drift3: 12px; --rise3: 44px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 32%; --size: 100px; --duration: 24s; --delay: 2.6s; --drift1: -22px; --rise1: 26px; --drift2: 18px; --rise2: -18px; --drift3: 16px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 62%; --left: 58%; --size: 72px; --duration: 18s; --delay: 1.1s; --drift1: 20px; --rise1: 24px; --drift2: -18px; --rise2: -30px; --drift3: 10px; --rise3: 32px;"></span>
+      <span class="bubble" style="--top: 68%; --left: 86%; --size: 82px; --duration: 21s; --delay: 2.1s; --drift1: -24px; --rise1: 28px; --drift2: 22px; --rise2: -20px; --drift3: -16px; --rise3: 38px;"></span>
+      <span class="bubble" style="--top: 74%; --left: 18%; --size: 88px; --duration: 23s; --delay: 0.5s; --drift1: 18px; --rise1: 22px; --drift2: -16px; --rise2: -26px; --drift3: 14px; --rise3: 36px;"></span>
+    </div>
+    <div class="sea-floor" aria-hidden="true"></div>
+
+    <div class="app">
+      <header class="hero">
+        <h1>Economic Decision-Making</h1>
+        <p class="subtitle">Identify the opportunity cost behind each decision and learn why the true cost is not always the money spent.</p>
+      </header>
+
+      <main>
+        <section id="quiz-screen" class="panel visible">
+          <div class="quiz-meta">
+            <span id="question-count">Question 1 of 10</span>
+            <span id="score-count">Score: 0/10</span>
+          </div>
+
+          <h2 id="scenario-text" class="scenario"></h2>
+          <h3 id="question-text" class="question-text"></h3>
+          <div id="answer-options" class="options-grid"></div>
+          <p id="feedback" class="feedback" aria-live="polite"></p>
+          <div id="explanation-box" class="explanation hidden"></div>
+          <button id="next-btn" class="primary-btn hidden" type="button">Next Question</button>
+        </section>
+
+        <section id="summary-screen" class="panel hidden">
+          <h2>Review Complete</h2>
+          <p id="summary-text" class="summary-card"></p>
+          <button id="restart-btn" class="primary-btn" type="button">Restart</button>
+          <button id="menu-btn" class="primary-btn" style="margin-top: 12px; background: linear-gradient(135deg, #f3d0a2, #de9b70); color: #22373d;" type="button">Return to Menu</button>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const scenarios = [
+        {
+          name: 'Jordan',
+          scenario: 'Jordan is a college student with a four-hour break between classes. He could study for an economics exam, work a four-hour shift earning $15 per hour, or spend the afternoon with friends. Jordan chooses to study.',
+          question: 'What is the opportunity cost of Jordan\'s decision?',
+          options: [
+            'The value of the time he spent studying',
+            'The $60 he could have earned from work',
+            'The cost of the exam itself',
+            'The grades he might receive later'
+          ],
+          correctIndex: 1,
+          explanation: 'Opportunity cost is the value of the next-best alternative that is given up. Because working for four hours at $15/hour would have earned Jordan $60, that is the opportunity cost. The time spent studying is not the cost in this context; it is the choice he made.'
+        },
+        {
+          name: 'Sarah',
+          scenario: 'Sarah has saved $8,000 and is deciding whether to use the money as a down payment on a car or leave it in a savings account earning interest. She buys the car.',
+          question: 'Which option best represents the opportunity cost of Sarah\'s decision?',
+          options: [
+            'The price she paid for the car',
+            'The maintenance costs of the car',
+            'The interest she could have earned by keeping the money in savings',
+            'The cost of fuel used during the first month'
+          ],
+          correctIndex: 2,
+          explanation: 'The opportunity cost is not the purchase price of the car itself; that is a direct cost of the choice. The true opportunity cost is the next-best alternative forgone, which here is the interest income Sarah gave up by not leaving the money in savings.'
+        },
+        {
+          name: 'Marcus',
+          scenario: 'Marcus has an economics exam tomorrow. He already studied for three hours and is deciding whether to spend another two hours studying or relax by playing video games.',
+          question: 'Which economic concept should Marcus use to decide whether the extra two hours of studying are worth it?',
+          options: [
+            'Comparative advantage',
+            'Scarcity',
+            'Marginal analysis',
+            'Absolute advantage'
+          ],
+          correctIndex: 2,
+          explanation: 'Marcus should compare the marginal benefit of the extra studying with the marginal cost of giving up leisure time. That is marginal analysis: deciding whether the next additional hour provides enough benefit to justify the sacrifice.'
+        },
+        {
+          name: 'Emily',
+          scenario: 'Emily bought a $40 concert ticket. Later she feels too tired to go and would rather study for an important exam. She is tempted to stay because she already spent the money.',
+          question: 'From an economic perspective, should Emily consider the $40 a reason to stay?',
+          options: [
+            'Yes, because she should avoid wasting the money',
+            'No, because the $40 is a sunk cost',
+            'Yes, because the ticket is a valuable asset',
+            'No, because concerts are never worth attending'
+          ],
+          correctIndex: 1,
+          explanation: 'A sunk cost is money that has already been spent and cannot be recovered. Whether she stays or leaves, the $40 is gone. The decision should be based on current benefits and costs, not on past spending.'
+        },
+        {
+          name: 'Alex',
+          scenario: 'Alex has Saturday free. He could work an eight-hour shift earning $120, study for an exam, or spend the day at the beach. He chooses to study. His next-best alternative was the shift at work.',
+          question: 'What is the opportunity cost of Alex\'s Saturday decision?',
+          options: [
+            'The beach trip he gave up',
+            'The $120 he could have earned working',
+            'His grade on the exam',
+            'The time he spent studying'
+          ],
+          correctIndex: 1,
+          explanation: 'The opportunity cost is the value of the best alternative forgone. Since the next-best alternative was working for $120, that lost income is the opportunity cost of studying.'
+        },
+        {
+          name: 'Taylor',
+          scenario: 'Taylor has one free evening before a big test. She can either tutor a classmate for $35 or spend the time reading her notes. She picks the tutoring job.',
+          question: 'What is the opportunity cost of Taylor\'s choice?',
+          options: [
+            'The $35 she earned',
+            'The study time she gave up',
+            'The cost of the tutoring materials',
+            'The number of classmates who need help'
+          ],
+          correctIndex: 1,
+          explanation: 'Taylor gave up the chance to use that time to improve her own understanding of the material. The opportunity cost is the value of the next-best alternative, which here is the study time and the learning benefit she sacrificed in exchange for tutoring.'
+        },
+        {
+          name: 'Maya',
+          scenario: 'Maya is deciding whether to spend her Saturday morning at a paid internship shadowing opportunity or sleeping in before a long week. She chooses the internship.',
+          question: 'Which statement best identifies the opportunity cost of Maya\'s decision?',
+          options: [
+            'The money she earns from the internship',
+            'The sleep she loses by waking up early',
+            'The value of the extra rest she gave up',
+            'The cost of commuting to the internship'
+          ],
+          correctIndex: 2,
+          explanation: 'The opportunity cost is the best alternative she gave up, not the benefit she received. By choosing the internship, Maya gave up the value of extra rest and a slower morning. That lost value is the opportunity cost.'
+        },
+        {
+          name: 'Wesley',
+          scenario: 'Wesley has a limited budget for the month. He can either buy a new laptop for school or use the money to take a certification class that would help him get a better job. He buys the laptop.',
+          question: 'What is the opportunity cost of Wesley\'s decision?',
+          options: [
+            'The price of the laptop',
+            'The value of the certification class he did not take',
+            'The fact that he now has a laptop',
+            'The monthly payment he must make'
+          ],
+          correctIndex: 1,
+          explanation: 'The opportunity cost is the next-best option forgone. Wesley gave up the future benefit of the certification class, which may improve his career prospects. The laptop itself is just the chosen good, not the cost of the alternative.'
+        },
+        {
+          name: 'Avery',
+          scenario: 'Avery has a free afternoon and can either volunteer at a community food pantry or work a paid shift at a local café. She chooses the volunteer shift.',
+          question: 'Which answer best captures the opportunity cost of Avery\'s decision?',
+          options: [
+            'The value of the wages she gave up by not working',
+            'The amount she donated to the pantry',
+            'The total cost of transportation to both jobs',
+            'The number of people served at the pantry'
+          ],
+          correctIndex: 0,
+          explanation: 'Because Avery chose volunteering over working, the lost wages from the café are the opportunity cost. Opportunity cost is based on the value of the next-best alternative that had to be given up.'
+        },
+        {
+          name: 'Riley',
+          scenario: 'Riley is deciding whether to spend the next two hours studying for an upcoming quiz or hanging out with friends. She chooses to study, knowing the quiz is worth a significant portion of her grade.',
+          question: 'Why is the opportunity cost of studying not simply “the two hours spent studying”?',
+          options: [
+            'Because opportunity cost is always measured in dollars only',
+            'Because the true cost is the value of the best alternative given up',
+            'Because studying has no cost',
+            'Because the quiz grade is more important than time'
+          ],
+          correctIndex: 1,
+          explanation: 'Opportunity cost is not just the time spent doing something. It is the value of the next-best alternative that was sacrificed. Riley gave up social time, relaxation, or another productive activity. That forgone value is the opportunity cost.'
+        }
+      ];
+
+      const questionCountEl = document.getElementById('question-count');
+      const scoreCountEl = document.getElementById('score-count');
+      const scenarioTextEl = document.getElementById('scenario-text');
+      const questionTextEl = document.getElementById('question-text');
+      const answerOptionsEl = document.getElementById('answer-options');
+      const feedbackEl = document.getElementById('feedback');
+      const explanationBoxEl = document.getElementById('explanation-box');
+      const nextBtn = document.getElementById('next-btn');
+      const summaryScreen = document.getElementById('summary-screen');
+      const quizScreen = document.getElementById('quiz-screen');
+      const summaryTextEl = document.getElementById('summary-text');
+      const restartBtn = document.getElementById('restart-btn');
+      const menuBtn = document.getElementById('menu-btn');
+
+      let currentIndex = 0;
+      let score = 0;
+      let answered = false;
+
+      function renderQuestion() {
+        const current = scenarios[currentIndex];
+        answered = false;
+
+        questionCountEl.textContent = `Question ${currentIndex + 1} of ${scenarios.length}`;
+        scoreCountEl.textContent = `Score: ${score}/${scenarios.length}`;
+        scenarioTextEl.textContent = current.scenario;
+        questionTextEl.textContent = current.question;
+        answerOptionsEl.innerHTML = '';
+        feedbackEl.className = 'feedback';
+        feedbackEl.textContent = '';
+        explanationBoxEl.classList.add('hidden');
+        explanationBoxEl.textContent = '';
+        nextBtn.classList.add('hidden');
+
+        current.options.forEach((option, optionIndex) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'option-btn';
+          button.textContent = option;
+          button.addEventListener('click', () => handleAnswer(optionIndex, current));
+          answerOptionsEl.appendChild(button);
+        });
+      }
+
+      function handleAnswer(selectedIndex, current) {
+        if (answered) return;
+        answered = true;
+
+        const buttons = answerOptionsEl.querySelectorAll('.option-btn');
+        buttons.forEach((button, index) => {
+          button.disabled = true;
+          if (index === current.correctIndex) {
+            button.style.background = 'linear-gradient(180deg, #e7f7ee, #d7f1e3)';
+            button.style.borderColor = 'rgba(31, 143, 103, 0.6)';
+          }
+          if (index === selectedIndex && index !== current.correctIndex) {
+            button.style.background = 'linear-gradient(180deg, #fdeceb, #f9d7d3)';
+            button.style.borderColor = 'rgba(209, 93, 82, 0.7)';
+          }
+        });
+
+        const isCorrect = selectedIndex === current.correctIndex;
+        if (isCorrect) {
+          score += 1;
+          feedbackEl.textContent = 'Correct!';
+          feedbackEl.classList.add('correct');
+        } else {
+          feedbackEl.textContent = 'Not quite.';
+          feedbackEl.classList.add('wrong');
+        }
+
+        scoreCountEl.textContent = `Score: ${score}/${scenarios.length}`;
+
+        const correctText = current.options[current.correctIndex];
+        explanationBoxEl.innerHTML = `
+          <strong>${isCorrect ? 'Why this is correct:' : 'Correct answer:'}</strong> ${correctText}<br><br>
+          ${current.explanation}
+        `;
+        explanationBoxEl.classList.remove('hidden');
+
+        if (currentIndex < scenarios.length - 1) {
+          nextBtn.classList.remove('hidden');
+        } else {
+          nextBtn.textContent = 'See Summary';
+          nextBtn.classList.remove('hidden');
+        }
+      }
+
+      function showSummary() {
+        quizScreen.classList.add('hidden');
+        summaryScreen.classList.remove('hidden');
+        const percent = Math.round((score / scenarios.length) * 100);
+        summaryTextEl.innerHTML = `You scored <strong>${score}/${scenarios.length}</strong> (${percent}%).<br><br>Opportunity cost is one of the most important ideas in economics because it helps people see what is being given up when they make a choice. The best decisions compare the value of the chosen option to the value of the next-best alternative, not just the money spent.`;
+      }
+
+      function nextQuestion() {
+        if (currentIndex < scenarios.length - 1) {
+          currentIndex += 1;
+          renderQuestion();
+        } else {
+          showSummary();
+        }
+      }
+
+      function restartQuiz() {
+        currentIndex = 0;
+        score = 0;
+        quizScreen.classList.remove('hidden');
+        summaryScreen.classList.add('hidden');
+        nextBtn.textContent = 'Next Question';
+        renderQuestion();
+      }
+
+      nextBtn.addEventListener('click', nextQuestion);
+      restartBtn.addEventListener('click', restartQuiz);
+      menuBtn.addEventListener('click', () => {
+        window.location.href = 'rhinehart_economic_studying.html';
+      });
+
+      renderQuestion();
+    </script>
+  </body>
+</html>
