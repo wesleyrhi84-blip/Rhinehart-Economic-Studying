@@ -1,0 +1,475 @@
+"""Code snapshot for Rhinehart Economic Studying.
+
+This file is intentionally stored as Python so GitHub will classify the repo
+as Python-based for this source snapshot, while keeping the original HTML code
+visible without executing it in a browser.
+"""
+
+HTML_SOURCE = """<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rhinehart Economic Studying</title>
+    <style>
+      :root {
+        --teal-950: #0a3c3f;
+        --teal-900: #0d4d52;
+        --teal-800: #1c6b70;
+        --teal-700: #2e8d95;
+        --teal-200: #dff7f1;
+        --teal-100: #edfdf9;
+        --paper: #f7fffd;
+        --ink: #1d2d33;
+        --muted: #586f75;
+        --peach: #f6c6a8;
+        --amber: #f7d978;
+        --coral: #ef9187;
+        --rose: #f9d7d1;
+        --lavender: #d8d0f6;
+        --shadow: rgba(17, 69, 72, 0.18);
+        --border: rgba(18, 76, 80, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        background:
+          radial-gradient(circle at top left, rgba(255,255,255,0.78), transparent 22%),
+          radial-gradient(circle at 80% 20%, rgba(66, 154, 164, 0.28), transparent 24%),
+          radial-gradient(circle at bottom right, rgba(20, 101, 109, 0.22), transparent 26%),
+          linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%);
+        color: var(--ink);
+        overflow: hidden;
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 30px 18px;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(circle at 15% 20%, rgba(255, 176, 96, 0.14), transparent 18%),
+          radial-gradient(circle at 82% 14%, rgba(255, 176, 96, 0.12), transparent 18%),
+          linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
+        pointer-events: none;
+      }
+
+      .page-bubbles {
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        overflow: hidden;
+        pointer-events: none;
+        filter: blur(0.15px);
+      }
+
+      .bubble {
+        position: absolute;
+        top: var(--top);
+        left: var(--left);
+        width: var(--size);
+        height: var(--size);
+        border-radius: 50%;
+        opacity: 0.72;
+        pointer-events: none;
+        z-index: 0;
+        border: 1px solid rgba(255,255,255,0.82);
+        background: radial-gradient(circle at 30% 28%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.8) 18%, rgba(248, 203, 166, 0.9) 36%, rgba(245, 157, 104, 0.74) 62%, rgba(219, 108, 70, 0.44) 80%, rgba(255,255,255,0.06) 100%);
+        box-shadow: inset 0 0 12px rgba(255,255,255,0.8), inset -16px -18px 24px rgba(148, 84, 52, 0.15), 0 0 22px rgba(255, 200, 150, 0.15), 0 0 38px rgba(255,255,255,0.08);
+        animation: ambientFloat var(--duration) ease-in-out infinite alternate;
+        animation-delay: var(--delay);
+      }
+
+      .sea-floor {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 120px;
+        background: linear-gradient(180deg, rgba(234, 201, 149, 0.9), rgba(196, 156, 95, 0.96));
+        border-top: 1px solid rgba(112, 84, 56, 0.18);
+        box-shadow: 0 -12px 26px rgba(73, 52, 38, 0.12);
+        z-index: 0;
+      }
+
+      .sea-floor::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(93, 70, 45, 0.05));
+        pointer-events: none;
+      }
+
+      @keyframes ambientFloat {
+        0% {
+          transform: translate3d(0, 0, 0) scale(0.84);
+          opacity: 0.08;
+        }
+        25% {
+          opacity: 0.42;
+        }
+        50% {
+          transform: translate3d(var(--drift1), var(--rise1), 0) scale(1.03);
+          opacity: 0.7;
+        }
+        75% {
+          transform: translate3d(var(--drift2), var(--rise2), 0) scale(1.08);
+          opacity: 0.36;
+        }
+        100% {
+          transform: translate3d(var(--drift3), var(--rise3), 0) scale(1.12);
+          opacity: 0.04;
+        }
+      }
+
+      .app {
+        width: min(1020px, 100%);
+        background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+        border: 1px solid rgba(255,255,255,0.42);
+        border-radius: 32px;
+        box-shadow: 0 28px 60px rgba(14, 64, 69, 0.13), inset 0 1px 0 rgba(255,255,255,0.48), inset 0 0 0 1px rgba(255,255,255,0.22);
+        padding: 28px 22px 24px;
+        backdrop-filter: blur(8px);
+        position: relative;
+        z-index: 1;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(2.2rem, 4vw, 3.2rem);
+        letter-spacing: 0.04em;
+        color: var(--teal-900);
+        font-weight: 800;
+        text-shadow: 0 2px 0 rgba(255,255,255,0.35);
+      }
+
+      .subtitle {
+        margin: 0;
+        font-size: 1.04rem;
+        line-height: 1.6;
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .tool-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 22px;
+        align-items: stretch;
+      }
+
+      .tool-btn:nth-child(4) {
+        grid-column: 1;
+      }
+
+      .tool-btn:nth-child(5) {
+        grid-column: 2;
+      }
+
+      .tool-btn {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        min-height: 260px;
+        padding: 18px 18px 16px;
+        border: 1px solid rgba(255,255,255,0.42);
+        border-radius: 28px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0.14));
+        box-shadow: 0 18px 30px rgba(18, 55, 61, 0.14), inset 0 1px 0 rgba(255,255,255,0.52), inset 0 0 0 1px rgba(255,255,255,0.2);
+        cursor: pointer;
+        transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+        text-align: left;
+        color: var(--ink);
+      }
+
+      .tool-btn:hover {
+        transform: translateY(-5px) scale(1.013);
+        box-shadow: 0 26px 36px rgba(18, 55, 61, 0.2), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 0 0 1px rgba(255,255,255,0.25);
+        filter: saturate(1.06);
+      }
+
+      .tool-btn:active {
+        transform: translateY(0) scale(0.99);
+      }
+
+      .tool-btn[data-tone="peach"] {
+        background: linear-gradient(145deg, #f9d7bd, #f5b78c);
+      }
+
+      .tool-btn[data-tone="amber"] {
+        background: linear-gradient(145deg, #fbeaaa, #f4d063);
+      }
+
+      .tool-btn[data-tone="rose"] {
+        background: linear-gradient(145deg, #f9d7d3, #ee957f);
+      }
+
+      .tool-btn[data-tone="purple"] {
+        background: linear-gradient(145deg, #e5d2ee, #bb91d0);
+      }
+
+      .info-links {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 24px;
+      }
+
+      .info-link {
+        display: inline-block;
+        justify-self: center;
+        padding: 11px 20px;
+        border: 2px solid rgba(14, 58, 67, 0.2);
+        border-radius: 14px;
+        background: linear-gradient(135deg, #f1f7f6, #dfeae8);
+        color: var(--ink);
+        font-size: 0.98rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+
+      .info-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(15, 52, 58, 0.1);
+      }
+
+      .tool-btn .tag {
+        display: inline-flex;
+        align-self: flex-start;
+        padding: 7px 11px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.38);
+        border: 1px solid rgba(31, 66, 73, 0.15);
+        font-size: 0.74rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-bottom: 18px;
+        color: rgba(23, 45, 49, 0.84);
+      }
+
+      .tool-btn h2 {
+        margin: 0 0 10px;
+        font-size: 1.28rem;
+        letter-spacing: 0.02em;
+        line-height: 1.25;
+      }
+
+      .tool-btn p {
+        margin: 0;
+        font-size: 0.96rem;
+        line-height: 1.6;
+        color: rgba(29, 51, 56, 0.84);
+      }
+
+      .panel {
+        background: rgba(255, 255, 255, 0.52);
+        border: 1px solid rgba(20, 74, 81, 0.12);
+        border-radius: 22px;
+        padding: 24px 22px;
+      }
+
+      .panel-title {
+        margin: 0 0 12px;
+        font-size: clamp(1.4rem, 2vw, 2rem);
+        color: var(--teal-900);
+      }
+
+      .tool-summary {
+        display: grid;
+        gap: 8px;
+        margin: 18px 0 20px;
+      }
+
+      .command-box {
+        background: rgba(17, 66, 73, 0.92);
+        color: #eafaf8;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.08);
+        padding: 16px 18px;
+        font-family: "Consolas", "Courier New", monospace;
+        letter-spacing: 0.02em;
+        word-break: break-word;
+      }
+
+      .status-line {
+        min-height: 26px;
+        margin-top: 10px;
+        font-weight: 700;
+        color: var(--teal-800);
+      }
+
+      .status-line.running {
+        color: var(--teal-800);
+      }
+
+      .status-line.done {
+        color: #0d5d46;
+      }
+
+      .run-actions,
+      .footer-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .btn {
+        appearance: none;
+        border: 2px solid rgba(14, 58, 67, 0.2);
+        border-radius: 14px;
+        padding: 12px 18px;
+        font-size: 0.98rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 16px rgba(15, 52, 58, 0.1);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .primary {
+        background: linear-gradient(135deg, #3b8297, #2a6b7a);
+        color: white;
+      }
+
+      .secondary {
+        background: linear-gradient(135deg, #f1f7f6, #dfeae8);
+        color: var(--ink);
+      }
+
+      .ghost {
+        background: #f8ebe8;
+        color: #4b2d2c;
+      }
+
+      .restart {
+        background: linear-gradient(135deg, #f6d7be, #f0c96d);
+        color: #27373d;
+      }
+
+      .return {
+        background: linear-gradient(135deg, #d7f0ec, #bfe4df);
+        color: #1d454a;
+      }
+
+      .helper {
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 720px) {
+        .tool-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .run-actions,
+        .footer-actions,
+        .info-links {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .info-links {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 9%; --left: 8%; --size: 220px; --duration: 7s; --delay: 0s; --drift1: 18px; --rise1: 20px; --drift2: -12px; --rise2: -8px; --drift3: 10px; --rise3: 24px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 58%; --size: 180px; --duration: 8.2s; --delay: 1s; --drift1: -10px; --rise1: 18px; --drift2: 8px; --rise2: -14px; --drift3: -6px; --rise3: 26px;"></span>
+      <span class="bubble" style="--top: 32%; --left: 16%; --size: 300px; --duration: 9.8s; --delay: 1.4s; --drift1: 22px; --rise1: 18px; --drift2: -18px; --rise2: 12px; --drift3: 14px; --rise3: 28px;"></span>
+      <span class="bubble" style="--top: 24%; --left: 74%; --size: 280px; --duration: 10.2s; --delay: 0.6s; --drift1: -20px; --rise1: 28px; --drift2: 18px; --rise2: -8px; --drift3: -12px; --rise3: 20px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 10%; --size: 240px; --duration: 8.8s; --delay: 1.2s; --drift1: 16px; --rise1: -18px; --drift2: -14px; --rise2: 16px; --drift3: 10px; --rise3: 20px;"></span>
+      <span class="bubble" style="--top: 62%; --left: 64%; --size: 260px; --duration: 9.6s; --delay: 0.5s; --drift1: -18px; --rise1: -12px; --drift2: 20px; --rise2: 18px; --drift3: -14px; --rise3: 22px;"></span>
+      <span class="bubble" style="--top: 72%; --left: 30%; --size: 150px; --duration: 7.6s; --delay: 1.1s; --drift1: 12px; --rise1: -13px; --drift2: -8px; --rise2: 14px; --drift3: 6px; --rise3: 18px;"></span>
+      <span class="bubble" style="--top: 14%; --left: 46%; --size: 120px; --duration: 6.8s; --delay: 0.8s; --drift1: 8px; --rise1: 10px; --drift2: -10px; --rise2: -8px; --drift3: 6px; --rise3: 12px;"></span>
+    </div>
+
+    <div class="app">
+      <header class="header">
+        <h1>Rhinehart Economic Studying</h1>
+        <p class="subtitle">A floating suite of study tools for economics, thinking, and personal systems.</p>
+      </header>
+
+      <main>
+        <section class="tool-grid" aria-label="Economic study tools">
+          <button class="tool-btn" data-tone="peach" type="button">
+            <span class="tag">Concept</span>
+            <h2>Economic Models</h2>
+            <p>Map decisions, incentives, and tradeoffs using simple frameworks for everyday economic reasoning.</p>
+          </button>
+
+          <button class="tool-btn" data-tone="amber" type="button">
+            <span class="tag">Analysis</span>
+            <h2>Behavioral Signals</h2>
+            <p>Track how incentives, scarcity, and identity reshape choices across work, money, and society.</p>
+          </button>
+
+          <button class="tool-btn" data-tone="rose" type="button">
+            <span class="tag">Method</span>
+            <h2>Thinking Systems</h2>
+            <p>Compare mental models and build a reliable way to reason about systems, leverage, and risk.</p>
+          </button>
+
+          <button class="tool-btn" data-tone="purple" type="button">
+            <span class="tag">Practice</span>
+            <h2>Decision Journal</h2>
+            <p>Capture the assumptions behind your choices so you can revisit them with more clarity over time.</p>
+          </button>
+
+          <button class="tool-btn" data-tone="amber" type="button">
+            <span class="tag">Vision</span>
+            <h2>Long-Term Strategy</h2>
+            <p>Use compounding thinking to align your daily actions with bigger personal and financial goals.</p>
+          </button>
+        </section>
+
+        <div class="info-links">
+          <a class="info-link" href="#">Study Notes</a>
+          <a class="info-link" href="#">Reading List</a>
+          <a class="info-link" href="#">Reflection</a>
+        </div>
+      </main>
+    </div>
+
+    <div class="sea-floor" aria-hidden="true"></div>
+  </body>
+</html>
+"""
+
+if __name__ == "__main__":
+    print("This is a source snapshot for the HTML page and does not render in the browser.")
