@@ -1,13 +1,27 @@
 # Rhinehart-Economic-Studying
-Welcome to the Rhinehart Economic Studying simulator! In this simulator, users can practice their economic knowledge, both macro and micro, across 6 different targeted study modules. These modules consist of vocabulary practice, market risk simulations, and applying practical knowledge to make real life decisions. 
 
-Features
-5 hands-on economic studying modules, targeting important vocabulary, practical application, and key fundamentals of macroeconomics and microeconomics
-Each module records the user's accuracy, giving a final score after each is completed
-Vocabulary modules are 10 questions, while the practical simulators are 5 questios
-1 final test module that pulls random questions across the other 5 modules, producing a final score
-Purpose
-My motivation for this study tool was to not only practice my own online development skills, but to help other students practice a subject that I struggled a lot in. Out of any course, economics had taken me the longest to getting used to. Each module in the Rhinehart Economic Studying project reflects my struggle with these previous subjects. Vocabulary terms and concepts that I was most unfamiliar with have now been brought together to study all at once in a fun, interactive way. In the future, I hope to develop more online web projects to help students practice other difficult subjects. This project is only the beginning, and I am ecstatic to have set a strong foundation in my web-development career. Go Seahawks!
+Welcome to the Rhinehart Economic Studying simulator! This simulator allows users to practice their economic knowledge, both macro and micro, across 6 different targeted study modules. These modules consist of vocabulary practice, market risk simulations, and applying practical knowledge to real-life decisions.
 
-Developer
-Wesley Rhinehart
+## Features
+
+* **5 hands-on economic study modules** targeting important vocabulary, practical application, and key fundamentals of macroeconomics and microeconomics.
+* **Accuracy tracking** for each module, providing a final score after completion.
+* **10-question vocabulary modules** designed to test understanding of important economic terms and concepts.
+* **5-question practical simulators** focused on applying economic knowledge to real-world situations.
+* **1 final test module** that pulls random questions from the other 5 modules and produces an overall final score.
+
+## Purpose
+
+My motivation for creating this study tool was to not only practice my own web development skills, but also help other students practice a subject that I struggled with. Out of all my courses, economics took me the longest to get used to.
+
+* Each module reflects concepts and subjects that I personally struggled with.
+* Vocabulary terms and economic concepts that I found unfamiliar have been brought together into one interactive study tool.
+* The goal is to make studying economics more engaging, practical, and accessible for students.
+* In the future, I hope to develop more web-based projects that help students practice other difficult subjects.
+* This project is only the beginning, and I am excited to have built a strong foundation for my web development career.
+
+**Go Seahawks!**
+
+## Developer
+
+**Wesley Rhinehart**
