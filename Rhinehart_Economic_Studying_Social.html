@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Page</title>
+    <style>
+      :root { --ink: #24313b; --muted: #5e6c77; --teal-deep: #0d4c51; --border: rgba(18, 69, 74, 0.15); }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; font-family: "Segoe UI", Tahoma, sans-serif; color: var(--ink); background: radial-gradient(circle at 12% 8%, rgba(255,255,255,0.82), transparent 24%), radial-gradient(circle at 88% 20%, rgba(244,179,138,0.28), transparent 24%), linear-gradient(180deg, #e8faf7 0%, #d2ecee 48%, #b9dadd 100%); }
+      html, body { background: radial-gradient(circle at top left, rgba(255,255,255,0.78), transparent 22%), radial-gradient(circle at 80% 20%, rgba(66,154,164,0.28), transparent 24%), radial-gradient(circle at bottom right, rgba(20,101,109,0.22), transparent 26%), linear-gradient(180deg, #dffaf7 0%, #cfeef0 30%, #bfe2e6 52%, #a8d5d9 100%); overflow: hidden; }
+      body::before { content: ""; position: fixed; inset: 0; background: radial-gradient(circle at 15% 20%, rgba(255,176,96,0.14), transparent 18%), radial-gradient(circle at 82% 14%, rgba(255,176,96,0.12), transparent 18%), linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.02)); pointer-events: none; }
+      .page-bubbles { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; filter: blur(0.15px); }
+      .bubble { position: absolute; top: var(--top); left: var(--left); width: var(--size); height: var(--size); border-radius: 50%; opacity: 0.72; border: 1px solid rgba(255,255,255,0.72); background: radial-gradient(circle at 30% 28%, rgba(255,255,255,0.96), rgba(255,255,255,0.64) 18%, rgba(248,203,166,0.82) 36%, rgba(245,157,104,0.62) 62%, rgba(219,108,70,0.34) 80%, rgba(255,255,255,0.04) 100%); box-shadow: inset 0 0 12px rgba(255,255,255,0.72), 0 0 22px rgba(255,200,150,0.12); animation: ambientFloat var(--duration) ease-in-out infinite alternate; animation-delay: var(--delay); }
+      @keyframes ambientFloat { 0% { transform: translate3d(0,0,0) scale(0.85); opacity: 0.08; } 50% { transform: translate3d(var(--drift1),var(--rise1),0) scale(1.02); opacity: 0.7; } 100% { transform: translate3d(var(--drift3),var(--rise3),0) scale(1.12); opacity: 0.05; } }
+      body { min-height: 100vh; display: grid; place-items: center; padding: 24px; }
+      .app { position: relative; z-index: 1; width: min(760px, 100%); padding: 28px; background: rgba(255,255,255,0.56); border: 1px solid var(--border); border-radius: 24px; box-shadow: 0 22px 54px rgba(16,71,77,0.14); }
+      header { text-align: center; margin-bottom: 24px; }
+      h1 { margin: 0 0 8px; color: var(--teal-deep); font-size: clamp(2rem, 5vw, 3rem); }
+      .subtitle { margin: 0; color: var(--muted); line-height: 1.6; }
+      .content { padding: 22px; background: rgba(255,255,255,0.7); border: 1px solid var(--border); border-radius: 18px; line-height: 1.75; }
+      .content h2 { margin: 0 0 12px; color: var(--teal-deep); }
+      .content p { margin: 0 0 16px; }
+      .content p:last-child { margin-bottom: 0; }
+      .social-links { display: grid; gap: 12px; margin-top: 18px; }
+      .social-links a { display: block; padding: 13px 16px; border-radius: 10px; background: rgba(232,250,247,0.72); color: var(--teal-deep); font-weight: 700; text-decoration: none; }
+      .social-links a:hover, .social-links a:focus-visible { background: rgba(194,231,231,0.9); text-decoration: underline; }
+      .placeholder { padding: 16px; border-left: 4px solid rgba(20,111,115,0.7); background: rgba(232,250,247,0.7); border-radius: 10px; }
+      .back-link { display: block; width: fit-content; margin: 22px auto 0; padding: 11px 20px; border-radius: 12px; background: linear-gradient(135deg, #1d7b7d, #0d5b60); color: white; font-weight: 700; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <div class="page-bubbles" aria-hidden="true">
+      <span class="bubble" style="--top: 8%; --left: 8%; --size: 70px; --duration: 18s; --delay: 0s; --drift1: 22px; --rise1: 24px; --drift3: 16px; --rise3: 36px;"></span>
+      <span class="bubble" style="--top: 18%; --left: 72%; --size: 96px; --duration: 24s; --delay: 2.2s; --drift1: -18px; --rise1: 24px; --drift3: -12px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 52%; --left: 32%; --size: 100px; --duration: 24s; --delay: 2.6s; --drift1: -22px; --rise1: 26px; --drift3: 16px; --rise3: 40px;"></span>
+      <span class="bubble" style="--top: 68%; --left: 86%; --size: 82px; --duration: 21s; --delay: 2.1s; --drift1: -24px; --rise1: 28px; --drift3: -16px; --rise3: 38px;"></span>
+    </div>
+    <main class="app">
+      <header>
+        <h1>Connect with the developer!</h1>
+      </header>
+      <section class="content">
+        <div class="social-links">
+          <a href="https://www.linkedin.com/in/wesley-rhinehart-730939391/" target="_blank" rel="noopener noreferrer">Wesley Rhinehart | LinkedIn</a>
+          <a href="https://uncw.joinhandshake.com/profiles/wesleyrhinehart" target="_blank" rel="noopener noreferrer">Wesley Rhinehart | Handshake</a>
+          <a href="https://github.com/wesleyrhi84-blip" target="_blank" rel="noopener noreferrer">Wesley Rhinehart | GitHub</a>
+          <a href="https://www.instagram.com/wesley.rhinehart/" target="_blank" rel="noopener noreferrer">Wesley Rhinehart | Instagram</a>
+          <a href="mailto:wesleyrhi84@gmail.com">For business inquiries: wesleyrhi84@gmail.com</a>
+        </div>
+      </section>
+      <a class="back-link" href="rhinehart_economic_studying.html">Back to Study Modules</a>
+    </main>
+  </body>
+</html>
